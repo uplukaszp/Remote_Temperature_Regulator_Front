@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <title>Hello, world!</title>
+</head>
+
+<body>
+    <!-- Navigation bar -->
+    <nav class="navbar navbar-dark bg-dark mb-3">
+        <div class="navbar-nav mr-auto ml-2">
+            <a href="main.html" class="btn btn-dark"><i data-feather="arrow-left-circle"></i></a>
+
+        </div>
+        <div class="navbar-nav ml-auto mr-2">
+            <a class="nav-item nav-link active navbar-dark" href="#">Logout <span class="sr-only">(current)</span></a>
+        </div>
+    </nav>
+    <div class="row px-5 mb-5">
+        <!--Form for adding new tasks-->
+        <div class="col-8 mx-auto">
+            <div class="card">
+                <div class="card-header">Add new task</div>
+                <form class="card-body">
+                    <div class="form-row align-items-end">
+                        <div class="col-2">
+                            <label for="selectName">Device</label>
+                            <select id="selectName" class="form-control">
+                                <option selected>Dev-1</option>
+                                <option>Dev-2</option>
+                                <option>Dev-3</option>
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <label for="inputName">Time</label>
+                            <input type="time" class="form-control" id="inputName" placeholder="Name">
+                        </div>
+                        <div class="col-2">
+                            <label for="selectName">DayOfWeek</label>
+                            <select id="selectName" class="form-control">
+                                <option selected>Monday</option>
+                                <option>Tuesday</option>
+                                <option>Wednesday</option>
+                                <option>Thursday</option>
+                                <option>Friday</option>
+                                <option>Saturday</option>
+                                <option>Sunday</option>
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <label for="selectState">State</label>
+                            <select id="selectState" class="form-control">
+                                <option selected>ON</option>
+                                <option>OFF</option>
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <label for="selectType">Task type</label>
+                            <select id="selectType" class="form-control">
+                                <option selected>Single</option>
+                                <option>Cyclic</option>
+                            </select>
+                        </div>
+                        <div class="col-2">
+                            <button type="submit" class="btn btn-primary">Add</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Div with infos about device-->
+    <div class="col-7 mx-auto">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Day</th>
+                    <th scope="col">Time</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Action</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">Mon.</th>
+                    <td>11:12</td>
+                    <td>Single</td>
+                    <td>ON</td>
+                    <td><i data-feather="trash"></i></td>
+                </tr>
+                <tr>
+                    <th scope="row">Sat.</th>
+                    <td>22:11</td>
+                    <td>Cyclic</td>
+                    <td>OFF</td>
+                    <td><i data-feather="trash"></i></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        feather.replace()
+    </script>
+</body>
+
+</html>
