@@ -1,0 +1,38 @@
+.trash-icon {
+  color: #333;
+}
+.trash-icon .feather {
+  color: rgb(92, 92, 92);
+}
+.trash-icon:hover .feather {
+  color: inherit;
+}
+
+
+
+.lowerText {
+  text-transform: lowercase;
+}
+
+td::first-letter,
+p {
+  text-transform: capitalize;
+}
+
+td {
+  text-align: center;
+}
+
+.input-group {
+  top:40px;
+  width:auto;
+}
+.unity-input .form-control {
+  border-right:0!important;
+}
+.unity-input .input-group-addon {
+  background:white!important;
+  border-left:none!important;
+  font-weight:bold;
+  color:#333;
+}
