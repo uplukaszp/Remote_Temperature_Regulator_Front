@@ -25,7 +25,7 @@ function addFormListener() {
     form.addEventListener("submit", function (e) {
         e.preventDefault();
         const body = {
-            dayOfWeek: day.selectedIndex + 1,
+            dayOfWeek: day.selectedIndex,
             time: time.value,
             type: type.value.toLowerCase(),
             stateToSchedule: state.value.toLowerCase(),
@@ -41,12 +41,29 @@ function addFormListener() {
             body: JSON.stringify(body)
 
         }).then(response => {
-            response.json().then(response => {
-                loadTask(response);
-                form.reset();
-                temp.parentElement.classList.remove("d-none");
-                temp.required = true;
-            })
+            if (response.ok)
+                response.json().then(response => {
+                    loadTask(response);
+                    form.reset();
+                    temp.parentElement.classList.remove("d-none");
+                    temp.required = true;
+                })
+            else throw response;
+        }).catch(response => {
+            if (response.status === 409) {
+                if (!form.querySelector(".alert")) {
+                    const alert = document.createElement("div");
+                    alert.classList.add("alert");
+                    alert.classList.add("alert-danger");
+                    alert.classList.add("alert-dismissible");
+                    alert.classList.add("fade");
+                    alert.classList.add("show");
+                    alert.innerHTML = `Cannot create two or more tasks in the same time <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+           <span aria-hidden="true">&times;</span>
+         </button>`;
+                    form.appendChild(alert);
+                }
+            } else console.log(response);
         })
     })
 }
@@ -83,7 +100,7 @@ function loadTask(task, tableBody) {
     a.dataset.taskId = task.id;
     aCell.appendChild(a);
     dayCell.innerText = task.dayOfWeek;
-    timeCell.innerText = task.time.slice(0,-3);
+    timeCell.innerText = task.time.slice(0, -3);
     typeCell.innerText = task.type;
     stateCell.innerText = task.stateToSchedule;
     tempCell.innerText = (task.stateToSchedule === "off") ? "- °C" : parseFloat(task.temperatureToSchedule).toFixed(1) + " °C";
