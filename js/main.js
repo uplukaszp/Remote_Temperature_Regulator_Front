@@ -16,7 +16,7 @@ function addNewDevicesIds() {
         }
     }).then(response => {
         response.json().then(response => {
-            while(deviceSelector.length>0)deviceSelector.remove(deviceSelector.length-1);
+            while (deviceSelector.length > 0) deviceSelector.remove(deviceSelector.length - 1);
             response.forEach(element => {
                 const opt = document.createElement("option");
                 opt.innerText = element.id;
@@ -77,7 +77,7 @@ function loadRegistredDevices() {
 
 function createDeviceCard(device) {
     const content = document.createElement("div");
-    content.setAttribute("id", device.id);
+    content.setAttribute("id", "card-"+device.id);
     content.classList.add("col-12");
     content.classList.add("col-md-6");
     content.classList.add("mb-3");
@@ -117,6 +117,7 @@ function createDeviceCard(device) {
   </div>
     `;
     const button = content.querySelector(".btn");
+    button.dataset.device = JSON.stringify(device);
     addButtonListener(button, device.id);
     return content;
 }
@@ -125,41 +126,36 @@ function createDeviceCard(device) {
 
 function addButtonListener(button, id) {
     button.addEventListener("click", function () {
-        fetch(`http://localhost:8080/device/${id}/control/parameters/`, {
-            mode: "cors",
-            method: "GET",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        }).then(response => {
-            response.json().then(info => {
-                console.log(info);
-                const modal = document.querySelector(".modal");
-                const radios = modal.querySelectorAll(".form-check-input");
-                const tempInput = modal.querySelector(".form-control");
-                tempInput.value = info.savedTemperature;
-                modal.dataset.id = id;
-                radios.forEach(radio => {
-                    radio.checked = false;
-                })
-                if (info.state === "auto") radios[0].checked = true;
-                if (info.state === "on") radios[1].checked = true;
-                if (info.state === "off") radios[2].checked = true;
-
-                if (info.state === "auto") tempInput.disabled = false;
-                else tempInput.disabled = true;
-            })
+        const device=JSON.parse(this.dataset.device);
+        const info=device.info;
+        const modal = document.querySelector(".modal");
+        const radios = modal.querySelectorAll(".form-check-input");
+        const tempInput = modal.querySelector(".form-control");
+        tempInput.value = info.savedTemperature;
+        modal.dataset.id = device.id;
+        radios.forEach(radio => {
+            radio.checked = false;
         })
+        if (info.state === "auto") radios[0].checked = true;
+        if (info.state === "on") radios[1].checked = true;
+        if (info.state === "off") radios[2].checked = true;
 
+        if (info.state === "auto") tempInput.disabled = false;
+        else tempInput.disabled = true;
     })
+
+
 }
 
 function updateDeviceCardInfo(id, parameter) {
-    const card = document.querySelector(`#${id}`);
+    const card = document.querySelector(`#card-${id}`);
     card.querySelector("#currentTemp").innerText = parseFloat(parameter.currentTemperature).toFixed(1) + '°C';
     card.querySelector("#currentState").innerText = parameter.state;
     card.querySelector("#targetTemp").innerText = parseFloat(parameter.savedTemperature).toFixed(1) + " °C";
-    if(parameter.state==="auto")card.querySelector("#targetTemp").classList.remove("text-muted");
+    const device=JSON.parse(card.querySelector("button").dataset.device);
+    device.parameters=parameter;
+    card.querySelector("button").dataset.device=JSON.stringify(device);
+    if (parameter.state === "auto") card.querySelector("#targetTemp").classList.remove("text-muted");
     else card.querySelector("#targetTemp").classList.add("text-muted");
 
 }
