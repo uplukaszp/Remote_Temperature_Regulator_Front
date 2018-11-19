@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     addFormListener();
     loadRegistredDevices();
     addModalListener();
+    window.setInterval(updateCard,5000);
 })
 
 function addNewDevicesIds() {
@@ -30,10 +31,8 @@ function addFormListener() {
     const form = document.querySelector("form");
     const deviceSelector = document.querySelector("#selectId");
     const deviceNameInput = document.querySelector("#inputName");
-    console.log(form);
     form.addEventListener("submit", function (e) {
         e.preventDefault();
-        console.log('fetch');
         fetch("http://localhost:8080/device/", {
             mode: "cors",
             method: "POST",
@@ -146,15 +145,30 @@ function addButtonListener(button, id) {
 
 
 }
-
+function updateCard(){
+    fetch("http://localhost:8080/device/", {
+        mode: "cors",
+        method: "GET",
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => {
+        response.json().then(devices => {
+          devices.forEach(device => {
+              updateDeviceCardInfo(device.id,device.info);
+          });
+        })
+    })
+}
 function updateDeviceCardInfo(id, parameter) {
     const card = document.querySelector(`#card-${id}`);
     card.querySelector("#currentTemp").innerText = parseFloat(parameter.currentTemperature).toFixed(1) + '°C';
     card.querySelector("#currentState").innerText = parameter.state;
     card.querySelector("#targetTemp").innerText = parseFloat(parameter.savedTemperature).toFixed(1) + " °C";
     const device=JSON.parse(card.querySelector("button").dataset.device);
-    device.parameters=parameter;
+    device.info=parameter;
     card.querySelector("button").dataset.device=JSON.stringify(device);
+
     if (parameter.state === "auto") card.querySelector("#targetTemp").classList.remove("text-muted");
     else card.querySelector("#targetTemp").classList.add("text-muted");
 
@@ -167,6 +181,8 @@ function addModalListener() {
     const tempInput = modal.querySelector(".form-control");
     const form = modal.querySelector("form");
     form.addEventListener("submit", function (e) {
+        saveButton.classList.add("disabled")
+        saveButton.innerText="Saving";
         if (tempInput.checkValidity()) {
             e.preventDefault();
             radios.forEach(radio => {
@@ -188,7 +204,8 @@ function addModalListener() {
                         $('.modal').modal('hide');
 
                         resp.json().then(resp => {
-                            console.log(resp);
+                            saveButton.classList.remove("disabled");
+                            saveButton.innerText="Save";
                             updateDeviceCardInfo(modal.dataset.id, resp);
                         })
                     })

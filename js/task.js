@@ -7,14 +7,15 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 
 function addFormListener() {
-    const type = document.querySelector("#selectType");
-    const state = document.querySelector("#selectState");
-    const day = document.querySelector("#selectDay");
-    const time = document.querySelector("#inputTime");
-    const temp = document.querySelector("#inputTemp");
     const form = document.querySelector("form");
+    const type = form.querySelector("#selectType");
+    const state = form.querySelector("#selectState");
+    const day = form.querySelector("#selectDay");
+    const time = form.querySelector("#inputTime");
+    const temp = form.querySelector("#inputTemp");
+    const submit=form.querySelector(".btn");
     state.addEventListener("change", function () {
-        if (this.value === 'OFF') {
+        if (this.value === 'OFF'||this.value==="ON") {
             temp.parentElement.classList.add("d-none");
             temp.required = false;
         } else {
@@ -23,6 +24,8 @@ function addFormListener() {
         }
     })
     form.addEventListener("submit", function (e) {
+        submit.classList.add("disabled");
+        submit.innerText="Adding";
         e.preventDefault();
         const body = {
             dayOfWeek: day.selectedIndex,
@@ -41,6 +44,8 @@ function addFormListener() {
             body: JSON.stringify(body)
 
         }).then(response => {
+            submit.classList.remove("disabled");
+            submit.innerText="Add";
             if (response.ok)
                 response.json().then(response => {
                     loadTask(response);
