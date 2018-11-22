@@ -10,7 +10,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function addNewDevicesIds() {
     const deviceSelector = document.querySelector("#selectId");
-
+    while (deviceSelector.length > 0) {
+        deviceSelector.remove(deviceSelector.length - 1);
+    }
     fetch("http://localhost:8080/device/find", {
         mode: "cors",
         method: "get",
@@ -56,13 +58,30 @@ function addFormListener() {
             if (response.status === 401) {
                 showModalLogin();
             }
+            if (response.status === 409) {
+                if (!form.querySelector(".alert")) {
+                    const alert = document.createElement("div");
+                    alert.classList.add("alert");
+                    alert.classList.add("alert-danger");
+                    alert.classList.add("alert-dismissible");
+                    alert.classList.add("fade");
+                    alert.classList.add("show");
+                    alert.classList.add("mx-auto")
+                    alert.classList.add("mt-3");
+                    alert.classList.add("mb-1");
+                    alert.innerHTML = `Can not add two or more devices with the same name <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                   <span aria-hidden="true">&times;</span>
+                 </button>`;
+                    form.appendChild(alert);
+                }
+            }
             if (response.ok)
-            response.json().then(response => {
-                const deviceList = document.querySelector("#deviceList");
-                deviceList.appendChild(createDeviceCard(response));
-                form.reset();
-                addNewDevicesIds();
-            })
+                response.json().then(response => {
+                    const deviceList = document.querySelector("#deviceList");
+                    deviceList.appendChild(createDeviceCard(response));
+                    form.reset();
+                    addNewDevicesIds();
+                })
         })
     })
 }
@@ -80,15 +99,15 @@ function loadRegistredDevices() {
             showModalLogin();
         }
         if (response.ok)
-        response.json().then(response => {
-            const deviceList = document.querySelector("#deviceList");
-            while (deviceList.hasChildNodes()) deviceList.removeChild(deviceList.firstChild);
-            response.forEach(device => {
-                deviceList.appendChild(createDeviceCard(device));
-                feather.replace();
+            response.json().then(response => {
+                const deviceList = document.querySelector("#deviceList");
+                while (deviceList.hasChildNodes()) deviceList.removeChild(deviceList.firstChild);
+                response.forEach(device => {
+                    deviceList.appendChild(createDeviceCard(device));
+                    feather.replace();
 
-            });
-        })
+                });
+            })
     })
 }
 
@@ -177,11 +196,11 @@ function updateCard() {
             showModalLogin();
         }
         if (response.ok)
-        response.json().then(devices => {
-            devices.forEach(device => {
-                updateDeviceCardInfo(device.id, device.info);
-            });
-        })
+            response.json().then(devices => {
+                devices.forEach(device => {
+                    updateDeviceCardInfo(device.id, device.info);
+                });
+            })
     })
 }
 
@@ -230,15 +249,15 @@ function addModalListener() {
                         if (response.status === 401) {
                             showModalLogin();
                         }
-                        if (response.ok){
-                        $('.modal').modal('hide');
+                        if (response.ok) {
+                            $('.modal').modal('hide');
 
-                        resp.json().then(resp => {
-                            saveButton.classList.remove("disabled");
-                            saveButton.innerText = "Save";
-                            updateDeviceCardInfo(modal.dataset.id, resp);
-                        })
-                    }
+                            resp.json().then(resp => {
+                                saveButton.classList.remove("disabled");
+                                saveButton.innerText = "Save";
+                                updateDeviceCardInfo(modal.dataset.id, resp);
+                            })
+                        }
                     })
                 }
             });
