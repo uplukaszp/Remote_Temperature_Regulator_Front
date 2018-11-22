@@ -55,8 +55,11 @@ function addFormListener() {
                 submit.innerText = "Add";
                 if (response.ok)
                     response.json().then(response => {
-                        loadTask(response);
+                        const tablebody=document.querySelector("tbody");
+                        while(tablebody.children.length>0)tablebody.removeChild(tablebody.lastChild);
+                        response.forEach(task=>loadTask(task));
                         form.reset();
+                        temp.parentNode.classList.add('d-none');
                     })
                 else throw response;
             }
