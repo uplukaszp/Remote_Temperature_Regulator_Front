@@ -1,9 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
+    loadModalLogin();
+    addLogoutListener();
     addNewDevicesIds();
     addFormListener();
     loadRegistredDevices();
     addModalListener();
-    window.setInterval(updateCard,5000);
+    window.setInterval(updateCard, 5000);
 })
 
 function addNewDevicesIds() {
@@ -13,17 +15,23 @@ function addNewDevicesIds() {
         mode: "cors",
         method: "get",
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + window.localStorage.getItem('Basic')
         }
     }).then(response => {
-        response.json().then(response => {
-            while (deviceSelector.length > 0) deviceSelector.remove(deviceSelector.length - 1);
-            response.forEach(element => {
-                const opt = document.createElement("option");
-                opt.innerText = element.id;
-                deviceSelector.add(opt);
-            });
-        })
+        if (response.status === 401) {
+            showModalLogin();
+        }
+        if (response.ok)
+            response.json().then(response => {
+                // showModalLogin();
+                while (deviceSelector.length > 0) deviceSelector.remove(deviceSelector.length - 1);
+                response.forEach(element => {
+                    const opt = document.createElement("option");
+                    opt.innerText = element.id;
+                    deviceSelector.add(opt);
+                });
+            })
     })
 }
 
@@ -37,13 +45,18 @@ function addFormListener() {
             mode: "cors",
             method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + window.localStorage.getItem('Basic')
             },
             body: JSON.stringify({
                 id: deviceSelector.value,
                 name: deviceNameInput.value
             })
         }).then(response => {
+            if (response.status === 401) {
+                showModalLogin();
+            }
+            if (response.ok)
             response.json().then(response => {
                 const deviceList = document.querySelector("#deviceList");
                 deviceList.appendChild(createDeviceCard(response));
@@ -59,9 +72,14 @@ function loadRegistredDevices() {
         mode: "cors",
         method: "GET",
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + window.localStorage.getItem('Basic')
         }
     }).then(response => {
+        if (response.status === 401) {
+            showModalLogin();
+        }
+        if (response.ok)
         response.json().then(response => {
             const deviceList = document.querySelector("#deviceList");
             while (deviceList.hasChildNodes()) deviceList.removeChild(deviceList.firstChild);
@@ -76,7 +94,7 @@ function loadRegistredDevices() {
 
 function createDeviceCard(device) {
     const content = document.createElement("div");
-    content.setAttribute("id", "card-"+device.id);
+    content.setAttribute("id", "card-" + device.id);
     content.classList.add("col-12");
     content.classList.add("col-md-6");
     content.classList.add("mb-3");
@@ -125,8 +143,8 @@ function createDeviceCard(device) {
 
 function addButtonListener(button, id) {
     button.addEventListener("click", function () {
-        const device=JSON.parse(this.dataset.device);
-        const info=device.info;
+        const device = JSON.parse(this.dataset.device);
+        const info = device.info;
         const modal = document.querySelector(".modal");
         const radios = modal.querySelectorAll(".form-check-input");
         const tempInput = modal.querySelector(".form-control");
@@ -145,29 +163,36 @@ function addButtonListener(button, id) {
 
 
 }
-function updateCard(){
+
+function updateCard() {
     fetch("http://localhost:8080/device/", {
         mode: "cors",
         method: "GET",
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + window.localStorage.getItem('Basic')
         }
     }).then(response => {
+        if (response.status === 401) {
+            showModalLogin();
+        }
+        if (response.ok)
         response.json().then(devices => {
-          devices.forEach(device => {
-              updateDeviceCardInfo(device.id,device.info);
-          });
+            devices.forEach(device => {
+                updateDeviceCardInfo(device.id, device.info);
+            });
         })
     })
 }
+
 function updateDeviceCardInfo(id, parameter) {
     const card = document.querySelector(`#card-${id}`);
     card.querySelector("#currentTemp").innerText = parseFloat(parameter.currentTemperature).toFixed(1) + '°C';
     card.querySelector("#currentState").innerText = parameter.state;
     card.querySelector("#targetTemp").innerText = parseFloat(parameter.savedTemperature).toFixed(1) + " °C";
-    const device=JSON.parse(card.querySelector("button").dataset.device);
-    device.info=parameter;
-    card.querySelector("button").dataset.device=JSON.stringify(device);
+    const device = JSON.parse(card.querySelector("button").dataset.device);
+    device.info = parameter;
+    card.querySelector("button").dataset.device = JSON.stringify(device);
 
     if (parameter.state === "auto") card.querySelector("#targetTemp").classList.remove("text-muted");
     else card.querySelector("#targetTemp").classList.add("text-muted");
@@ -182,7 +207,7 @@ function addModalListener() {
     const form = modal.querySelector("form");
     form.addEventListener("submit", function (e) {
         saveButton.classList.add("disabled")
-        saveButton.innerText="Saving";
+        saveButton.innerText = "Saving";
         if (tempInput.checkValidity()) {
             e.preventDefault();
             radios.forEach(radio => {
@@ -196,18 +221,24 @@ function addModalListener() {
                         mode: "cors",
                         method: "PUT",
                         headers: {
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Basic ' + window.localStorage.getItem('Basic')
                         },
                         body: JSON.stringify(body),
 
                     }).then(resp => {
+                        if (response.status === 401) {
+                            showModalLogin();
+                        }
+                        if (response.ok){
                         $('.modal').modal('hide');
 
                         resp.json().then(resp => {
                             saveButton.classList.remove("disabled");
-                            saveButton.innerText="Save";
+                            saveButton.innerText = "Save";
                             updateDeviceCardInfo(modal.dataset.id, resp);
                         })
+                    }
                     })
                 }
             });

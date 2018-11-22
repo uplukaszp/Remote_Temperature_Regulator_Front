@@ -1,6 +1,7 @@
 const id = location.hash.substr(1);
 document.addEventListener('DOMContentLoaded', function () {
-
+    loadModalLogin();
+    addLogoutListener();
     addFormListener();
     loadTasks();
     feather.replace()
@@ -13,9 +14,9 @@ function addFormListener() {
     const day = form.querySelector("#selectDay");
     const time = form.querySelector("#inputTime");
     const temp = form.querySelector("#inputTemp");
-    const submit=form.querySelector(".btn");
+    const submit = form.querySelector(".btn");
     state.addEventListener("change", function () {
-        if (this.value === 'OFF'||this.value==="ON") {
+        if (this.value === 'OFF' || this.value === "ON") {
             temp.parentElement.classList.add("d-none");
             temp.required = false;
         } else {
@@ -25,7 +26,7 @@ function addFormListener() {
     })
     form.addEventListener("submit", function (e) {
         submit.classList.add("disabled");
-        submit.innerText="Adding";
+        submit.innerText = "Adding";
         e.preventDefault();
         const body = {
             dayOfWeek: day.selectedIndex,
@@ -39,21 +40,26 @@ function addFormListener() {
             mode: "cors",
             method: "POST",
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + window.localStorage.getItem('Basic')
             },
             body: JSON.stringify(body)
 
         }).then(response => {
-            submit.classList.remove("disabled");
-            submit.innerText="Add";
-            if (response.ok)
-                response.json().then(response => {
-                    loadTask(response);
-                    form.reset();
-                    temp.parentElement.classList.remove("d-none");
-                    temp.required = true;
-                })
-            else throw response;
+            
+            if (response.status === 401) {
+                showModalLogin();
+            }
+            if (response.ok) {
+                submit.classList.remove("disabled");
+                submit.innerText = "Add";
+                if (response.ok)
+                    response.json().then(response => {
+                        loadTask(response);
+                        form.reset();
+                    })
+                else throw response;
+            }
         }).catch(response => {
             if (response.status === 409) {
                 if (!form.querySelector(".alert")) {
@@ -78,15 +84,20 @@ function loadTasks() {
         mode: "cors",
         method: "GET",
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Authorization': 'Basic ' + window.localStorage.getItem('Basic')
         }
     }).then(response => {
-        response.json().then(response => {
-            const tableBody = document.querySelector("tbody");
-            response.forEach(task => {
-                loadTask(task, tableBody);
-            });
-        })
+        if (response.status === 401) {
+            showModalLogin();
+        }
+        if (response.ok)
+            response.json().then(response => {
+                const tableBody = document.querySelector("tbody");
+                response.forEach(task => {
+                    loadTask(task, tableBody);
+                });
+            })
     })
 }
 
@@ -108,7 +119,7 @@ function loadTask(task, tableBody) {
     timeCell.innerText = task.time.slice(0, -3);
     typeCell.innerText = task.type;
     stateCell.innerText = task.stateToSchedule;
-    tempCell.innerText = (task.stateToSchedule === "off") ? "- °C" : parseFloat(task.temperatureToSchedule).toFixed(1) + " °C";
+    tempCell.innerText = (task.stateToSchedule === "off"||task.stateToSchedule === "on") ? "- °C" : parseFloat(task.temperatureToSchedule).toFixed(1) + " °C";
     dayCell.classList.add("lowerText");
     typeCell.classList.add("lowerText");
     stateCell.classList.add("lowerText");
@@ -130,10 +141,15 @@ function addLinkListener(a) {
             mode: "cors",
             method: "DELETE",
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': 'Basic ' + window.localStorage.getItem('Basic')
             }
         }).then(response => {
-            this.parentElement.parentElement.parentElement.removeChild(this.parentElement.parentElement);
+            if (response.status === 401) {
+                showModalLogin();
+            }
+            if (response.ok)
+                this.parentElement.parentElement.parentElement.removeChild(this.parentElement.parentElement);
         })
     })
 }
