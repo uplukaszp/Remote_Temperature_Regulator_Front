@@ -36,7 +36,7 @@ function addFormListener() {
             temperatureToSchedule: temp.value,
         };
 
-        fetch(`http://localhost:8080/device/${id}/control/schedule/`, {
+        fetch(`${location.origin}/api/device/${id}/control/schedule/`, {
             mode: "cors",
             method: "POST",
             headers: {
@@ -83,7 +83,7 @@ function addFormListener() {
 }
 
 function loadTasks() {
-    fetch(`http://localhost:8080/device/${id}/control/schedule/`, {
+    fetch(`${location.origin}/api/device/${id}/control/schedule/`, {
         mode: "cors",
         method: "GET",
         headers: {
@@ -140,7 +140,7 @@ function loadTask(task, tableBody) {
 
 function addLinkListener(a) {
     a.addEventListener("click", function () {
-        fetch(`http://localhost:8080/device/${id}/control/schedule/${a.dataset.taskId}`, {
+        fetch(`${location.orgin}/api/device/${id}/control/schedule/${a.dataset.taskId}`, {
             mode: "cors",
             method: "DELETE",
             headers: {

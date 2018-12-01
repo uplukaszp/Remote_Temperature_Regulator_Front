@@ -13,7 +13,7 @@ function addNewDevicesIds() {
     while (deviceSelector.length > 0) {
         deviceSelector.remove(deviceSelector.length - 1);
     }
-    fetch("http://localhost:8080/device/find", {
+    fetch(location.origin+"/api/device/find", {
         mode: "cors",
         method: "get",
         headers: {
@@ -42,7 +42,7 @@ function addFormListener() {
     const deviceNameInput = document.querySelector("#inputName");
     form.addEventListener("submit", function (e) {
         e.preventDefault();
-        fetch("http://localhost:8080/device/", {
+        fetch(location.origin+"/api/device/", {
             mode: "cors",
             method: "POST",
             headers: {
@@ -86,7 +86,7 @@ function addFormListener() {
 }
 
 function loadRegistredDevices() {
-    fetch("http://localhost:8080/device/", {
+    fetch(location.origin+"/api/device/", {
         mode: "cors",
         method: "GET",
         headers: {
@@ -183,7 +183,7 @@ function addButtonListener(button, id) {
 }
 
 function updateCard() {
-    fetch("http://localhost:8080/device/", {
+    fetch(location.origin+"/api/device/", {
         mode: "cors",
         method: "GET",
         headers: {
@@ -231,7 +231,7 @@ function addModalListener() {
             radios.forEach(radio => {
                 if (radio.checked) {
                     const mode = radio.id.replace("Radio", "");
-                    const url = `http://localhost:8080/device/${modal.dataset.id}/control/${mode}`;
+                    const url = location.origin+`/api/device/${modal.dataset.id}/control/${mode}`;
                     const body = (mode === "auto") ? {
                         temperature: tempInput.value
                     } : "";

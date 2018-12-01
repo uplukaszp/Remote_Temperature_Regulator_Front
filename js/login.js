@@ -13,7 +13,7 @@ function loadModalLogin() {
                 var token = (login.value + ':' + password.value);
                 window.localStorage.setItem('Basic', btoa(unescape(encodeURIComponent(token))));
 
-                fetch("http://localhost:8080/device/find", {
+                fetch(location.origin+"/api/device/find", {
                     mode: "cors",
                     method: "get",
                     headers: {
