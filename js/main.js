@@ -26,7 +26,6 @@ function addNewDevicesIds() {
         }
         if (response.ok)
             response.json().then(response => {
-                // showModalLogin();
                 while (deviceSelector.length > 0) deviceSelector.remove(deviceSelector.length - 1);
                 response.forEach(element => {
                     const opt = document.createElement("option");
@@ -246,10 +245,10 @@ function addModalListener() {
                         body: JSON.stringify(body),
 
                     }).then(resp => {
-                        if (response.status === 401) {
+                        if (resp.status === 401) {
                             showModalLogin();
                         }
-                        if (response.ok) {
+                        if (resp.status===200) {
                             $('.modal').modal('hide');
 
                             resp.json().then(resp => {
