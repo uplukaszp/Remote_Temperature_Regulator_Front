@@ -1,3 +1,4 @@
+var timer;
 document.addEventListener('DOMContentLoaded', function () {
     loadModalLogin();
     addLogoutListener();
@@ -5,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     addFormListener();
     loadRegistredDevices();
     addModalListener();
-    window.setInterval(updateCard, 5000);
+    timer=window.setInterval(updateCard, 5000);
 })
 
 function addNewDevicesIds() {
