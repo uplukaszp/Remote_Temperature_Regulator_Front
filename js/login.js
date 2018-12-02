@@ -55,9 +55,11 @@ function addLogoutListener(){
     })
 }
 function showModalLogin() {
+    if(timer)window.clearInterval(timer);
     $("#loginModal").modal();
 }
 
 function hideModalLogin() {
+    if(timer&updateCard)timer=window.setInterval(updateCard, 5000);
     $("#loginModal").modal('hide');
 }
